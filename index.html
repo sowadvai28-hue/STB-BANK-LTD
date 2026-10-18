@@ -1,0 +1,2398 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Small Town Bank - Crypto Gateway</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #070510 0%, #0d0a1b 50%, #030107 100%);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --accent-gold: #ffbd59;
+            --accent-gold-glow: rgba(255, 189, 89, 0.25);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --card-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .app-container {
+            width: 100vw;
+            height: 100vh;
+            background: rgba(8, 5, 20, 0.95);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+        }
+
+        .top-bar {
+            padding: 24px 20px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo i {
+            font-size: 26px;
+            color: var(--accent-gold);
+            filter: drop-shadow(0 0 10px var(--accent-gold-glow));
+        }
+
+        .brand-name {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            background: linear-gradient(120deg, #ffffff 40%, var(--accent-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tab-bar {
+            display: flex;
+            background: rgba(255, 255, 255, 0.02);
+            margin: 10px 20px 15px;
+            padding: 6px;
+            border-radius: 18px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            padding: 14px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(255, 189, 89, 0.15) 0%, rgba(255, 189, 89, 0.03) 100%);
+            color: var(--accent-gold);
+            border: 1px solid rgba(255, 189, 89, 0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 5px 20px 30px;
+            scrollbar-width: none;
+        }
+
+        .app-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .shake-error { animation: shake 0.4s ease-in-out; border: 1.5px solid #ef4444 !important; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        .success-animate { animation: successPop 0.4s ease-out; border: 1.5px solid #10b981 !important; }
+        @keyframes successPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        .virtual-card {
+            background: linear-gradient(135deg, #181432 0%, #090714 100%);
+            border-radius: 26px;
+            padding: 26px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: var(--card-shadow), inset 0 1px 1px rgba(255,255,255,0.1);
+            margin-bottom: 25px;
+        }
+
+        .virtual-card::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle, rgba(255, 189, 89, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .card-type {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+        }
+
+        .card-chip {
+            width: 44px;
+            height: 32px;
+            background: linear-gradient(135deg, #ffd700 0%, #b3893c 100%);
+            border-radius: 8px;
+            position: relative;
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.4);
+        }
+
+        .card-chip::after {
+            content: '';
+            position: absolute;
+            top: 6px; left: 10px; right: 10px; bottom: 6px;
+            border: 1px solid rgba(0,0,0,0.15);
+            border-radius: 3px;
+        }
+
+        .card-brand-icon {
+            font-style: italic;
+            font-weight: 800;
+            font-size: 16px;
+            color: rgba(255,255,255,0.9);
+            letter-spacing: 0.5px;
+        }
+
+        .card-balance-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 6px;
+        }
+
+        .card-balance {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .currency-symbol { color: var(--accent-gold); }
+
+        .card-number {
+            margin-top: 30px;
+            font-size: 16px;
+            letter-spacing: 2.5px;
+            color: var(--text-secondary);
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .glass-input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .glass-input-group label {
+            display: block;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            padding-left: 4px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i.fa-solid:first-of-type,
+        .input-wrapper i.fa-brands:first-of-type {
+            position: absolute;
+            left: 18px;
+            color: var(--text-secondary);
+            font-size: 18px;
+            transition: color 0.3s;
+        }
+
+        .glass-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 16px 50px 16px 50px; 
+            color: var(--text-primary);
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-input:focus {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 189, 89, 0.5);
+            box-shadow: 0 0 20px rgba(255, 189, 89, 0.12);
+        }
+
+        .glass-input:focus ~ i.fa-solid:first-of-type,
+        .glass-input:focus ~ i.fa-brands:first-of-type {
+            color: var(--accent-gold);
+        }
+
+        select.glass-input {
+            appearance: none;
+            cursor: pointer;
+            padding-right: 16px;
+        }
+
+        .premium-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #ffbd59 0%, #d4932a 100%);
+            border: none;
+            padding: 16px;
+            border-radius: 16px;
+            color: #000000;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 6px 24px var(--accent-gold-glow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 15px;
+        }
+
+        .premium-btn:active {
+            transform: scale(0.96);
+            box-shadow: 0 3px 12px var(--accent-gold-glow);
+        }
+
+        .crypto-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .crypto-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .crypto-card i {
+            font-size: 20px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .crypto-card span {
+            font-size: 11px;
+            font-weight: 700;
+            display: block;
+        }
+
+        .crypto-card.active {
+            border-color: var(--accent-gold);
+            background: rgba(255, 189, 89, 0.1);
+            box-shadow: 0 0 15px rgba(255, 189, 89, 0.2);
+        }
+
+        .warning-banner {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 14px;
+            padding: 12px 14px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .warning-banner i {
+            font-size: 22px;
+            color: #ef4444;
+        }
+
+        .warning-banner p {
+            font-size: 11px;
+            color: #fca5a5;
+            line-height: 1.4;
+            font-weight: 600;
+        }
+
+        .telegram-btn {
+            background: linear-gradient(135deg, #229ED9 0%, #17719c 100%);
+            color: #ffffff;
+            border: none;
+            padding: 12px;
+            border-radius: 14px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(34, 158, 217, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .telegram-btn:active { transform: scale(0.97); }
+
+        .history-panel {
+            background: var(--glass-bg);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .panel-title {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-secondary);
+        }
+
+        .txn-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            max-height: 250px;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+        .txn-list::-webkit-scrollbar { display: none; }
+
+        .txn-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.01);
+            border: 1px solid rgba(255,255,255,0.02);
+            transition: transform 0.2s;
+        }
+
+        .txn-item:active { transform: scale(0.97); }
+        .txn-info { display: flex; align-items: center; gap: 14px; }
+        .txn-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+        }
+
+        .txn-icon.receive { background: rgba(16, 185, 129, 0.10); color: #10b981; }
+        .txn-icon.send { background: rgba(239, 68, 68, 0.10); color: #ef4444; }
+
+        .txn-details p { font-size: 14px; font-weight: 600; }
+        .txn-details span { font-size: 11px; color: var(--text-secondary); }
+        .txn-amount { font-size: 15px; font-weight: 700; }
+        .txn-amount.plus { color: #10b981; }
+        .txn-amount.minus { color: #ef4444; }
+
+        .bottom-action-bar {
+            padding: 15px 20px 25px;
+            background: rgba(10, 6, 26, 0.6);
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .bottom-action-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .bottom-action-item:active { color: var(--accent-gold); }
+        .bottom-action-item i { font-size: 20px; margin-bottom: 2px; }
+
+        .toast {
+            position: absolute;
+            bottom: -100px;
+            left: 20px;
+            right: 20px;
+            background: rgba(18, 14, 36, 0.98);
+            border: 1.5px solid var(--accent-gold);
+            border-radius: 18px;
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.6);
+            z-index: 100;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .toast.show { bottom: 100px; }
+        .toast-icon {
+            width: 38px;
+            height: 38px;
+            background: rgba(255, 189, 89, 0.15);
+            color: var(--accent-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .toast-text h4 { font-size: 14px; font-weight: 700; }
+        .toast-text p { font-size: 12px; color: var(--text-secondary); }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+        .modal-card {
+            background: #0f0b21;
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            max-width: 360px;
+            border-radius: 24px;
+            padding: 24px;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.show .modal-card { transform: scale(1); }
+
+        .agent-theme .tab-btn.active {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.03) 100%);
+            color: #f59e0b;
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+        .agent-theme .premium-btn {
+            background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+            box-shadow: 0 6px 24px rgba(245, 158, 11, 0.25);
+        }
+
+        .admin-theme { background: linear-gradient(135deg, #02120b 0%, #062419 100%) !important; }
+        .admin-theme .tab-btn.active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.03) 100%);
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+        .admin-theme .premium-btn {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            box-shadow: 0 6px 24px rgba(16, 185, 129, 0.25);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container" id="main-app-container">
+        
+        <div class="top-bar">
+            <div class="brand-logo">
+                <i class="fa-solid fa-building-columns"></i>
+                <span class="brand-name" id="logo-text">STB MOBILE</span>
+            </div>
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <span id="header-phone" style="font-size: 11px; font-weight: 700; color: var(--text-secondary);">GUEST</span>
+                <i class="fa-solid fa-arrow-right-from-bracket" id="logout-icon" style="color: #ef4444; font-size: 16px; cursor: pointer; display: none;" onclick="logout()"></i>
+            </div>
+        </div>
+
+        <div class="tab-bar" id="app-tabs">
+            <button class="tab-btn active" id="tab-opt-1" onclick="switchTab(1)">
+                <i class="fa-solid fa-wallet"></i> Wallet
+            </button>
+            <button class="tab-btn" id="tab-opt-2" onclick="switchTab(2)">
+                <i class="fa-solid fa-paper-plane"></i> Send
+            </button>
+            <button class="tab-btn" id="tab-opt-3" onclick="switchTab(3)">
+                <i class="fa-solid fa-qrcode"></i> Deposit/Crypto
+            </button>
+        </div>
+
+        <div class="app-content" id="app-content-panel">
+            
+            <!-- SCREEN: AUTH -->
+            <div id="screen-auth" class="screen active">
+                <div style="text-align: center; margin-bottom: 25px; margin-top: 10px;">
+                    <h2 id="auth-title" style="font-size: 20px; font-weight: 800;">অ্যাকাউন্টে লগইন করুন</h2>
+                    <p id="auth-desc" style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">আপনার মোবাইল নম্বর ও পিন দিন</p>
+                </div>
+
+                <div class="glass-input-group">
+                    <label>মোবাইল নম্বর</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="auth-phone" oninput="checkAuthModeChange()" class="glass-input" placeholder="01XXXXXXXXX">
+                        <i class="fa-solid fa-phone"></i>
+                    </div>
+                </div>
+
+                <div class="glass-input-group">
+                    <label id="auth-pin-label">৫ ডিজিটের পিন (PIN)</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="auth-pin" class="glass-input" placeholder="•••••" maxlength="5">
+                        <i class="fa-solid fa-lock"></i>
+                        <i class="fa-solid fa-eye" id="toggle-auth-pin" style="position: absolute; left: auto; right: 18px; cursor: pointer; color: var(--text-secondary); font-size: 16px;" onclick="togglePinDotView('auth-pin', 'toggle-auth-pin')"></i>
+                    </div>
+                </div>
+
+                <div id="reg-security-section" style="display: none; padding: 18px; background: rgba(255,255,255,0.01); border-radius: 16px; border: 1px solid var(--glass-border); margin-bottom: 20px;">
+                    <p style="font-size: 11px; font-weight: 700; color: var(--accent-gold); margin-bottom: 12px;"><i class="fa-solid fa-user-shield"></i> রিকভারি সিকিউরিটি প্রশ্ন:</p>
+                    <div class="glass-input-group" style="margin-bottom: 12px;">
+                        <div class="input-wrapper">
+                            <select id="reg-question" class="glass-input" style="padding-left: 18px;">
+                                <option value="q1">আপনার প্রিয় খেলা কোনটি?</option>
+                                <option value="q2">আপনার প্রিয় রঙের নাম কী?</option>
+                                <option value="q3">আপনার ছোটবেলার প্রিয় বন্ধুর নাম কী?</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="glass-input-group" style="margin-bottom: 0;">
+                        <div class="input-wrapper">
+                            <input type="text" id="reg-answer" class="glass-input" placeholder="উত্তরটি লিখুন" style="padding-right: 16px;">
+                            <i class="fa-solid fa-circle-question"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="premium-btn" id="auth-submit-btn" onclick="executeAuthAction()">
+                    <span>লগইন করুন</span> <i class="fa-solid fa-circle-chevron-right"></i>
+                </button>
+
+                <div id="auth-footer-links" style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px; padding: 0 5px;">
+                    <span onclick="toggleRegistrationMode()" id="auth-toggle-link" style="font-size: 12px; color: var(--accent-gold); font-weight: 600; cursor: pointer; text-decoration: underline;">নতুন অ্যাকাউন্ট (Register)</span>
+                    <span onclick="openSupportModal()" style="font-size: 12px; color: #f59e0b; font-weight: 600; cursor: pointer; text-decoration: underline;"><i class="fa-solid fa-headset"></i> পিন ভুলে গেছেন?</span>
+                </div>
+            </div>
+
+            <!-- SCREEN: DASHBOARD -->
+            <div id="screen-dashboard" class="screen">
+                <div class="virtual-card">
+                    <div class="card-type">
+                        <div class="card-chip"></div>
+                        <span class="card-brand-icon" id="card-label-type"><i class="fa-brands fa-cc-mastercard"></i> Gold</span>
+                    </div>
+                    <div class="card-balance-label">Total Balance</div>
+                    <div class="card-balance" onclick="toggleBalancePeek()" style="cursor: pointer;">
+                        <span class="currency-symbol">৳</span>
+                        <span id="card-balance-value">••••••</span>
+                    </div>
+                    <div class="card-number" id="card-holder-number">••••  ••••  ••••  XXXX</div>
+                </div>
+
+                <div class="history-panel">
+                    <div class="panel-header">
+                        <span class="panel-title" id="inbox-title">Recent Transactions</span>
+                        <i class="fa-solid fa-sliders" style="color: var(--text-secondary); font-size: 12px;"></i>
+                    </div>
+                    <div class="txn-list" id="global-transaction-list">
+                        <p style="color: var(--text-secondary); font-size: 12px; text-align: center; padding: 20px 0;">এখনো কোনো লেনদেন হয়নি।</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN: TRANSFER / SEND -->
+            <div id="screen-transfer" class="screen">
+                <div class="glass-input-group" style="margin-top: 10px;">
+                    <label id="send-target-label">প্রাপকের নম্বর</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="send-target-phone" class="glass-input" placeholder="01XXXXXXXXX">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                </div>
+
+                <div class="glass-input-group">
+                    <label>টাকার পরিমাণ (STD)</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="send-amount" class="glass-input" placeholder="0.00">
+                        <i class="fa-solid fa-bangladeshi-taka-sign"></i>
+                    </div>
+                </div>
+
+                <div class="glass-input-group" id="send-pin-wrapper">
+                    <label>আপনার ৫ ডিজিটের পিন (PIN)</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="send-pin" class="glass-input" placeholder="•••••" maxlength="5">
+                        <i class="fa-solid fa-lock"></i>
+                        <i class="fa-solid fa-eye" id="toggle-send-pin" style="position: absolute; left: auto; right: 18px; cursor: pointer; color: var(--text-secondary); font-size: 16px;" onclick="togglePinDotView('send-pin', 'toggle-send-pin')"></i>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-gap: 12px; margin-top: 25px;" id="user-transaction-buttons">
+                    <button class="premium-btn" onclick="executeUserTransaction('Send Money')" style="margin-top:0;">
+                        <i class="fa-solid fa-paper-plane"></i> Send Money
+                    </button>
+                    <button class="premium-btn" onclick="executeUserTransaction('Cash Out')" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); box-shadow: 0 6px 24px rgba(245,158,11,0.2); margin-top:0;">
+                        <i class="fa-solid fa-money-bill-transfer"></i> Cash Out
+                    </button>
+                </div>
+                
+                <button class="premium-btn" id="agent-action-btn" onclick="executeAgentSettlement()" style="display: none;">
+                    <i class="fa-solid fa-money-bill-transfer"></i> ক্যাশ আউট লেনদেন সম্পাদন
+                </button>
+            </div>
+
+            <!-- SCREEN: RECEIVE / CRYPTO DEPOSIT GATEWAY -->
+            <div id="screen-receive" class="screen">
+                <div style="text-align: center; margin-top: 10px;">
+                    <div style="background: rgba(255,255,255,0.02); border: 2px dashed var(--accent-gold); padding: 20px; border-radius: 28px; display: inline-block; margin-bottom: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.3);" id="qr-box-border">
+                        <i class="fa-solid fa-qrcode" style="font-size: 120px; color: #ffffff; filter: drop-shadow(0 0 15px rgba(255,255,255,0.2));"></i>
+                    </div>
+
+                    <div class="glass-input-group" style="text-align: left; margin-bottom: 20px;">
+                        <label>আপনার ওয়ালেট কোড</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="shareable-wallet-code" class="glass-input" value="01XXXXXXXXX" readonly style="color: var(--accent-gold); text-align: center; font-weight: 700; padding: 14px; font-size: 15px; letter-spacing: 1px;">
+                            <i class="fa-regular fa-copy" style="position: absolute; left: auto; right: 18px; cursor: pointer; color: var(--accent-gold); font-size: 18px;" onclick="copyWalletCode()"></i>
+                        </div>
+                    </div>
+
+                    <!-- UPGRADED CRYPTO PAYMENT GATEWAY PANEL -->
+                    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border); border-radius: 24px; padding: 20px; text-align: left; margin-bottom: 20px;">
+                        <h3 style="font-size: 15px; font-weight: 800; color: #10b981; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-coins"></i> ক্রিপ্টো ডিপোজিট পেমেন্ট গেটওয়ে
+                        </h3>
+
+                        <!-- STRICT WARNING BANNER -->
+                        <div class="warning-banner">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <p><strong>কঠোর সতর্কবার্তা:</strong> ডিপোজিট করার সময় কোনোভাবেই ডলারের পরিমাণ পরিবর্তন বা কারচুপি করবেন না। ডলারের পরিমাণ সঠিক না থাকলে ডিপোজিট রিজেক্ট হবে এবং অ্যাকাউন্ট ব্লক করা হতে পারে!</p>
+                        </div>
+
+                        <!-- CRYPTO SELECTOR -->
+                        <label style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 8px; display: block; font-weight: 600;">ক্রিপ্টো মেথড সিলেক্ট করুন:</label>
+                        <div class="crypto-grid">
+                            <div class="crypto-card active" id="crypto-btn-usdt_trc20" onclick="selectCryptoOption('usdt_trc20')">
+                                <i class="fa-solid fa-dollar-sign" style="color: #26a17b;"></i>
+                                <span>USDT (TRC20)</span>
+                            </div>
+                            <div class="crypto-card" id="crypto-btn-usdt_bep20" onclick="selectCryptoOption('usdt_bep20')">
+                                <i class="fa-solid fa-shield-halved" style="color: #f3ba2f;"></i>
+                                <span>USDT (BEP20)</span>
+                            </div>
+                            <div class="crypto-card" id="crypto-btn-btc" onclick="selectCryptoOption('btc')">
+                                <i class="fa-brands fa-bitcoin" style="color: #f7931a;"></i>
+                                <span>BTC</span>
+                            </div>
+                            <div class="crypto-card" id="crypto-btn-trx" onclick="selectCryptoOption('trx')">
+                                <i class="fa-solid fa-bolt" style="color: #eb0029;"></i>
+                                <span>TRX</span>
+                            </div>
+                            <div class="crypto-card" id="crypto-btn-bnb" onclick="selectCryptoOption('bnb')">
+                                <i class="fa-solid fa-coins" style="color: #f3ba2f;"></i>
+                                <span>BNB</span>
+                            </div>
+                        </div>
+
+                        <!-- ADMIN DEPOSIT ADDRESS DISPLAY -->
+                        <div style="background: rgba(0,0,0,0.4); padding: 14px; border-radius: 14px; border: 1px solid var(--glass-border); margin-bottom: 15px; font-size: 11px;">
+                            <span style="color: var(--text-secondary); font-weight: 600;">অ্যাডমিনের নির্বাচিত (<span id="selected-crypto-label" style="color:#10b981;">USDT TRC20</span>) ওয়ালেট অ্যাড্রেস:</span>
+                            <p id="admin-crypto-wallet-display" style="color: var(--accent-gold); font-weight: 700; margin-top: 6px; word-break: break-all; font-family: monospace; font-size: 13px;">অ্যাড্রেস লোড হচ্ছে...</p>
+                            <button onclick="copyAdminCryptoAddress()" style="background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #3b82f6; padding: 6px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; margin-top: 8px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                                <i class="fa-regular fa-copy"></i> অ্যাড্রেস কপি করুন
+                            </button>
+                        </div>
+
+                        <!-- INPUT: DEPOSIT DOLLAR AMOUNT -->
+                        <div class="glass-input-group" style="margin-bottom: 12px;">
+                            <label>ডলার / ক্রিপ্টো পরিমাণ (USD)</label>
+                            <div class="input-wrapper">
+                                <input type="number" id="crypto-usd-amount" class="glass-input" placeholder="0.00" style="padding: 12px 12px 12px 45px;" oninput="updateCryptoLiveCalculator()">
+                                <i class="fa-solid fa-dollar-sign"></i>
+                            </div>
+                            <small id="crypto-calc-hint" style="color: var(--accent-gold); font-size: 11px; display: block; margin-top: 4px; padding-left: 4px;">রেট: ১ ডলার = ১২০ STD (পাবেন: ৳0.00)</small>
+                        </div>
+
+                        <!-- INPUT: SENDER WALLET ADDRESS -->
+                        <div class="glass-input-group" style="margin-bottom: 12px;">
+                            <label>যে ওয়ালেট থেকে ডিপোজিট পাঠিয়েছেন (Sender Wallet / TxHash)</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="crypto-sender-address" class="glass-input" placeholder="আপনার ওয়ালেট অ্যাড্রেস বা ট্রানজেকশন আইডি" style="padding: 12px 12px 12px 45px;">
+                                <i class="fa-solid fa-receipt"></i>
+                            </div>
+                        </div>
+
+                        <!-- INPUT: ACCOUNT PIN -->
+                        <div class="glass-input-group" style="margin-bottom: 15px;">
+                            <label>৫ ডিজিটের অ্যাকাউন্ট পিন</label>
+                            <div class="input-wrapper">
+                                <input type="password" id="crypto-user-pin" class="glass-input" placeholder="•••••" maxlength="5" style="padding: 12px 12px 12px 45px;">
+                                <i class="fa-solid fa-lock"></i>
+                            </div>
+                        </div>
+
+                        <button class="premium-btn" onclick="submitCryptoDeposit()" style="background: linear-gradient(135deg, #10b981 0%, #047857 100%); padding: 14px; font-size: 14px; margin-top: 5px;">
+                            <i class="fa-solid fa-paper-plane"></i> ডিপোজিট রিকোয়েস্ট পাঠান
+                        </button>
+
+                        <!-- TELEGRAM SUPPORT BUTTON -->
+                        <div style="margin-top: 20px; border-top: 1px dashed var(--glass-border); padding-top: 15px; text-align: center;">
+                            <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 6px;">ডিপোজিট সংক্রান্ত কোনো সমস্যা হলে সাথে সাথে টেলিগ্রামে যোগাযোগ করুন:</p>
+                            <a id="telegram-support-link" href="https://t.me/admin_support" target="_blank" class="telegram-btn">
+                                <i class="fa-brands fa-telegram" style="font-size: 18px;"></i>
+                                <span>Contact Admin via Telegram</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- BANK LOAN REQUEST FORM -->
+                    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border); border-radius: 24px; padding: 20px; text-align: left; margin-bottom: 20px;">
+                        <h3 style="font-size: 14px; font-weight: 700; color: var(--accent-gold); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;"><i class="fa-solid fa-hand-holding-dollar"></i> আবেদন করুন ব্যাংক লোন</h3>
+                        <div class="glass-input-group" style="margin-bottom: 12px;">
+                            <label>আপনার নাম</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="loan-user-name" class="glass-input" placeholder="পূর্ণ নাম লিখুন" style="padding: 12px 12px 12px 45px;">
+                                <i class="fa-solid fa-signature"></i>
+                            </div>
+                        </div>
+                        <div class="glass-input-group" style="margin-bottom: 12px;">
+                            <label>লোনের পরিমাণ (STD)</label>
+                            <div class="input-wrapper">
+                                <input type="number" id="loan-requested-amount" class="glass-input" placeholder="0.00" style="padding: 12px 12px 12px 45px;">
+                                <i class="fa-solid fa-bangladeshi-taka-sign"></i>
+                            </div>
+                        </div>
+                        <div class="glass-input-group" style="margin-bottom: 15px;">
+                            <label>৫ ডিজিটের অ্যাকাউন্ট পিন</label>
+                            <div class="input-wrapper">
+                                <input type="password" id="loan-user-pin" class="glass-input" placeholder="•••••" maxlength="5" style="padding: 12px 12px 12px 45px;">
+                                <i class="fa-solid fa-lock"></i>
+                            </div>
+                        </div>
+                        <button class="premium-btn" onclick="submitLoanApplication()" style="padding: 12px; font-size: 14px; margin-top: 5px;">লোন রিকোয়েস্ট পাঠান</button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SCREEN: ADMIN CONTROL PANEL -->
+            <div id="screen-admin" class="screen">
+                <div style="padding-bottom: 10px;">
+                    <h3 style="font-size: 16px; font-weight: 800; color: #10b981; margin-bottom: 15px;"><i class="fa-solid fa-sliders"></i> অ্যাকাউন্ট কন্ট্রোল সেন্টার</h3>
+                </div>
+
+                <!-- ADMIN CRYPTO WALLET ADDRESSES & TELEGRAM MANAGEMENT -->
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 16px; padding: 15px; margin-bottom: 20px;">
+                    <h3 style="font-size: 13px; font-weight: 700; color: #10b981; margin-bottom: 12px;"><i class="fa-solid fa-wallet"></i> ক্রিপ্টো ওয়ালেট ও টেলিগ্রাম সাপোর্ট সেটিংস</h3>
+                    
+                    <div class="glass-input-group" style="margin-bottom: 10px;">
+                        <label>USDT (TRC20) Address</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="admin-trc20-input" class="glass-input" placeholder="T..." style="padding: 10px 10px 10px 40px; font-size: 13px;">
+                            <i class="fa-solid fa-dollar-sign"></i>
+                        </div>
+                    </div>
+
+                    <div class="glass-input-group" style="margin-bottom: 10px;">
+                        <label>USDT (BEP20) Address</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="admin-bep20-input" class="glass-input" placeholder="0x..." style="padding: 10px 10px 10px 40px; font-size: 13px;">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                    </div>
+
+                    <div class="glass-input-group" style="margin-bottom: 10px;">
+                        <label>Bitcoin (BTC) Address</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="admin-btc-input" class="glass-input" placeholder="bc1... or 1..." style="padding: 10px 10px 10px 40px; font-size: 13px;">
+                            <i class="fa-brands fa-bitcoin"></i>
+                        </div>
+                    </div>
+
+                    <div class="glass-input-group" style="margin-bottom: 10px;">
+                        <label>TRON (TRX) Address</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="admin-trx-input" class="glass-input" placeholder="T..." style="padding: 10px 10px 10px 40px; font-size: 13px;">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                    </div>
+
+                    <div class="glass-input-group" style="margin-bottom: 10px;">
+                        <label>BNB Smart Chain Address</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="admin-bnb-input" class="glass-input" placeholder="0x..." style="padding: 10px 10px 10px 40px; font-size: 13px;">
+                            <i class="fa-solid fa-coins"></i>
+                        </div>
+                    </div>
+
+                    <div class="glass-input-group" style="margin-bottom: 12px;">
+                        <label>Telegram Support Link / Username</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="admin-telegram-input" class="glass-input" placeholder="https://t.me/your_username" style="padding: 10px 10px 10px 40px; font-size: 13px;">
+                            <i class="fa-brands fa-telegram"></i>
+                        </div>
+                    </div>
+
+                    <button class="premium-btn" onclick="saveAdminCryptoSettings()" style="background: linear-gradient(135deg, #10b981 0%, #047857 100%); padding: 12px; font-size: 13px; margin-top: 0;">
+                        <i class="fa-solid fa-floppy-disk"></i> সেটিংস সেভ করুন
+                    </button>
+                </div>
+
+                <div class="glass-input-group">
+                    <label>টার্গেট অ্যাকাউন্ট নম্বর</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="admin-target-phone" class="glass-input" placeholder="01XXXXXXXXX">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </div>
+                </div>
+
+                <div class="glass-input-group">
+                    <label>নতুন ব্যালেন্স সেট করুন (STD)</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="admin-target-balance" class="glass-input" placeholder="0.00">
+                        <i class="fa-solid fa-bangladeshi-taka-sign"></i>
+                    </div>
+                </div>
+
+                <button class="premium-btn" onclick="executeAdminAction('balance')" style="margin-top: 10px;">
+                    <i class="fa-solid fa-pen-to-square"></i> ব্যালেন্স পরিবর্তন করুন
+                </button>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; grid-auto-flow: column; gap: 12px; margin-top: 15px;">
+                    <button class="premium-btn" onclick="executeAdminAction('suspended')" style="background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); box-shadow: 0 6px 24px rgba(239,68,68,0.25); margin-top: 0;">
+                        <i class="fa-solid fa-ban"></i> সাসপেন্ড
+                    </button>
+                    <button class="premium-btn" onclick="executeAdminAction('active')" style="background: linear-gradient(135deg, #10b981 0%, #065f46 100%); box-shadow: 0 6px 24px rgba(16,185,129,0.25); margin-top: 0;">
+                        <i class="fa-solid fa-circle-check"></i> সচল করুন
+                    </button>
+                </div>
+
+                <!-- ADMIN CRYPTO DEPOSIT REQUEST MANAGEMENT -->
+                <div style="margin-top: 25px; border-top: 1px solid var(--glass-border); padding-top: 20px;">
+                    <h3 style="font-size: 14px; font-weight: 700; color: #10b981; margin-bottom: 12px;"><i class="fa-solid fa-coins"></i> ক্রিপ্টো ডিপোজিট রিকোয়েস্ট ম্যানেজমেন্ট</h3>
+                    <div id="admin-crypto-request-list" style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 16px; padding: 12px; max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+                        <p style="color: var(--text-secondary); font-size: 12px; text-align: center; padding: 10px 0;">কোনো ক্রিপ্টো ডিপোজিট রিকোয়েস্ট পেন্ডিং নেই।</p>
+                    </div>
+                </div>
+
+                <!-- ADMIN LOAN MANAGEMENT -->
+                <div style="margin-top: 25px; border-top: 1px solid var(--glass-border); padding-top: 20px;">
+                    <h3 style="font-size: 14px; font-weight: 700; color: #10b981; margin-bottom: 12px;"><i class="fa-solid fa-landmark"></i> লোন রিকোয়েস্ট ম্যানেজমেন্ট (অ্যাডমিন)</h3>
+                    <div id="admin-loan-request-list" style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 16px; padding: 12px; max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+                        <p style="color: var(--text-secondary); font-size: 12px; text-align: center; padding: 10px 0;">কোনো লোন রিকোয়েস্ট পেন্ডিং নেই।</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 25px; border-top: 1px solid var(--glass-border); padding-top: 20px;">
+                    <h3 style="font-size: 14px; font-weight: 700; color: #10b981; margin-bottom: 12px;"><i class="fa-solid fa-users"></i> রেজিস্টার্ড ইউজার লিস্ট (<span id="admin-user-count">0</span>)</h3>
+                    <div id="admin-user-list" style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 16px; padding: 12px; max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+                    </div>
+                </div>
+
+                <div style="padding: 20px 0; border-top: 1px solid var(--glass-border); margin-top: 20px;">
+                    <h3 style="font-size: 14px; color: var(--text-primary); margin-bottom: 15px;"><i class="fa-solid fa-envelope"></i> ইনবক্স মেসেজ পাঠান</h3>
+                    
+                    <div class="glass-input-group">
+                        <label>টার্গেট নম্বর (সবার জন্য All লিখুন)</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="admin-msg-target" class="glass-input" placeholder="01XXXXXXXXX or All">
+                            <i class="fa-solid fa-bullseye"></i>
+                        </div>
+                    </div>
+
+                    <div class="glass-input-group">
+                        <label>মেসেজ লিখুন</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="admin-msg-text" class="glass-input" placeholder="আপনার মেসেজ এখানে লিখুন...">
+                            <i class="fa-solid fa-comment-dots"></i>
+                        </div>
+                    </div>
+
+                    <button class="premium-btn" onclick="sendAdminMessage()" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); box-shadow: 0 6px 24px rgba(59, 130, 246, 0.25);">
+                        <i class="fa-solid fa-paper-plane"></i> মেসেজ পাঠান
+                    </button>
+                </div>
+            </div>
+
+            <!-- SCREEN: AGENT PANEL -->
+            <div id="screen-agent-panel" class="screen">
+                <div style="padding-bottom: 10px;">
+                    <h3 style="font-size: 16px; font-weight: 800; color: #f59e0b; margin-bottom: 15px;"><i class="fa-solid fa-briefcase"></i> এজেন্ট কন্ট্রোল প্যানেল</h3>
+                </div>
+
+                <div class="glass-input-group">
+                    <label>গ্রাহকের অ্যাকাউন্ট নম্বর</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="agent-control-target-phone" class="glass-input" placeholder="01XXXXXXXXX">
+                        <i class="fa-solid fa-user-lock"></i>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px;">
+                    <button class="premium-btn" onclick="executeAgentAction('suspend')" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); box-shadow: 0 6px 24px rgba(239,68,68,0.25); margin-top: 0;">
+                        <i class="fa-solid fa-ban"></i> ২৪ঘণ্টা সাসপেন্ড
+                    </button>
+                    <button class="premium-btn" onclick="executeAgentAction('active')" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); box-shadow: 0 6px 24px rgba(245,158,11,0.25); margin-top: 0;">
+                        <i class="fa-solid fa-circle-check"></i> সচল করুন
+                    </button>
+                </div>
+
+                <div style="margin-top: 25px; border-top: 1px solid var(--glass-border); padding-top: 20px;">
+                    <h3 style="font-size: 14px; font-weight: 700; color: #f59e0b; margin-bottom: 12px;"><i class="fa-solid fa-hand-holding-dollar"></i> কাস্টমার লোন রিকোয়েস্ট (সীমা: ৫,০০০-৫০,০০০)</h3>
+                    <div id="agent-loan-request-list" style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 16px; padding: 12px; max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+                        <p style="color: var(--text-secondary); font-size: 12px; text-align: center; padding: 10px 0;">কোনো লোন রিকোয়েস্ট পেন্ডিং নেই।</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="bottom-action-bar">
+            <div class="bottom-action-item" onclick="showNotification('Secure System', 'STB Double-Shield encryption is monitoring current sessions.', 'fa-shield-halved')">
+                <i class="fa-solid fa-shield-halved" style="color: var(--accent-gold);"></i>
+                Secure
+            </div>
+            <div class="bottom-action-item" onclick="showNotification('Biometrics Active', 'STB Fast-Pay Touch ID successfully initialized.', 'fa-fingerprint')">
+                <i class="fa-solid fa-fingerprint"></i>
+                Touch-ID
+            </div>
+            <div class="bottom-action-item" onclick="openSupportModal()">
+                <i class="fa-solid fa-headset"></i>
+                Support
+            </div>
+        </div>
+
+        <div id="toast" class="toast">
+            <div class="toast-icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div class="toast-text">
+                <h4 id="toast-title">Success</h4>
+                <p id="toast-body">Your request was processed successfully.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SUPPORT RECOVERY MODAL -->
+    <div class="modal-overlay" id="support-modal">
+        <div class="modal-card">
+            <i class="fa-solid fa-xmark" style="position: absolute; right: 20px; top: 20px; font-size: 18px; cursor: pointer; color: var(--text-secondary);" onclick="closeSupportModal()"></i>
+            
+            <div style="text-align: center; margin-bottom: 20px;">
+                <i class="fa-solid fa-robot" style="font-size: 32px; color: var(--accent-gold); margin-bottom: 10px;"></i>
+                <h3 style="font-size: 16px; font-weight: 800;">অটোমেটিক ব্যাংক সাপোর্ট</h3>
+                <p style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">১০০+ র‍্যান্ডম পুল রিকভারি অ্যালগরিদম সক্রিয়</p>
+            </div>
+
+            <div id="support-step-1" style="display: block;">
+                <div class="glass-input-group" style="margin-bottom: 15px;">
+                    <label>অ্যাকাউন্ট নম্বর</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="support-phone-input" class="glass-input" placeholder="01XXXXXXXXX" style="padding: 12px 12px 12px 45px;">
+                        <i class="fa-solid fa-phone" style="position: absolute; left: 15px; font-size: 14px;"></i>
+                    </div>
+                </div>
+                <button class="premium-btn" onclick="verifySupportPhone()" style="padding: 12px; font-size: 13px;">অ্যাকাউন্ট চেক করুন</button>
+            </div>
+
+            <div id="support-step-2" style="display: none;">
+                <div style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border); margin-bottom: 15px; font-size: 12px;">
+                    <span style="color: var(--text-secondary); font-size: 10px;">নিরাপত্তা প্রশ্ন:</span>
+                    <p id="support-question-text" style="font-weight: 700; margin-top: 2px;">লোড হচ্ছে...</p>
+                </div>
+                <div class="glass-input-group" style="margin-bottom: 15px;">
+                    <label>আপনার সঠিক উত্তর</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="support-answer-input" class="glass-input" placeholder="উত্তরটি লিখুন" style="padding: 12px 12px 12px 45px;">
+                        <i class="fa-solid fa-key" style="position: absolute; left: 15px; font-size: 14px;"></i>
+                    </div>
+                </div>
+                <button class="premium-btn" onclick="verifySupportAnswer()" style="padding: 12px; font-size: 13px;">উত্তর যাচাই করুন</button>
+            </div>
+
+            <div id="support-step-3" style="display: none; text-align: center;">
+                <p style="font-size: 11px; color: #10b981; font-weight: 700; margin-bottom: 15px;"><i class="fa-solid fa-circle-check"></i> ভেরিফিকেশন সফল হয়েছে!</p>
+                
+                <div class="glass-input-group" style="margin-bottom: 15px; text-align: left;">
+                    <label>১০০+ পুল থেকে জেনারেট হওয়া নতুন পিন</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="support-new-pin-input" class="glass-input" readonly style="text-align: center; letter-spacing: 6px; font-size: 18px; font-weight: 900; padding: 12px; color: var(--accent-gold);">
+                    </div>
+                </div>
+                <button class="premium-btn" onclick="confirmSupportPINUpdate()" style="padding: 12px; font-size: 13px;">Confirm & Update PIN</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIREBASE & MAIN SCRIPT LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyAwghLXNZc5Slck9mRh6gv--o1NdWe3Jcs",
+          authDomain: "small-town-bank-9d5fc.firebaseapp.com",
+          databaseURL: "https://small-town-bank-9d5fc-default-rtdb.firebaseio.com",
+          projectId: "small-town-bank-9d5fc",
+          storageBucket: "small-town-bank-9d5fc.firebasestorage.app",
+          messagingSenderId: "936871891583",
+          appId: "1:936871891583:web:32ed881860ad0a6c15a54a",
+          measurementId: "G-PNEVQV4LG9"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Security Constants
+        const adminNumber = "01863062759";
+        const adminPin = "narutotx12"; 
+        const agentNumber = "01777777777";
+        const agentPassword = "smalltownstb";
+
+        const suggestedNewPins = [];
+        while (suggestedNewPins.length < 100) {
+            let randomPin = Math.floor(10000 + Math.random() * 90000).toString();
+            if (!suggestedNewPins.includes(randomPin)) {
+                suggestedNewPins.push(randomPin);
+            }
+        }
+
+        const securityQuestions = {
+            q1: "আপনার প্রিয় খেলা কোনটি?",
+            q2: "আপনার প্রিয় রঙের নাম কী?",
+            q3: "আপনার ছোটবেলার প্রিয় বন্ধুর নাম কী?"
+        };
+
+        let isLoginMode = true;
+        let currentLoggedUser = null;
+        let userRole = "user"; 
+        let balanceRevealed = false;
+        let cachedUserObj = null;
+        let activeTabIndex = 1;
+        let activeDatabaseListener = null;
+        let activeLoanListener = null;
+        let activeCryptoListener = null;
+        let activeAdminSettingsListener = null;
+
+        let selectedCryptoKey = "usdt_trc20";
+        let loadedCryptoWallets = {
+            usdt_trc20: "T9x...USDT_TRC20_WALLET",
+            usdt_bep20: "0x8F9...USDT_BEP20_WALLET",
+            btc: "bc1q...BTC_WALLET",
+            trx: "T9x...TRX_WALLET",
+            bnb: "0x8F9...BNB_WALLET"
+        };
+
+        window.switchTab = switchTab;
+        window.checkAuthModeChange = checkAuthModeChange;
+        window.toggleRegistrationMode = toggleRegistrationMode;
+        window.executeAuthAction = executeAuthAction;
+        window.toggleBalancePeek = toggleBalancePeek;
+        window.executeUserTransaction = executeUserTransaction;
+        window.executeAgentSettlement = executeAgentSettlement;
+        window.logout = logout;
+        window.executeAdminAction = executeAdminAction;
+        window.sendAdminMessage = sendAdminMessage;
+        window.openSupportModal = openSupportModal;
+        window.closeSupportModal = closeSupportModal;
+        window.verifySupportPhone = verifySupportPhone;
+        window.verifySupportAnswer = verifySupportAnswer;
+        window.confirmSupportPINUpdate = confirmSupportPINUpdate;
+        window.copyWalletCode = copyWalletCode;
+        window.showNotification = showNotification;
+        window.togglePinDotView = togglePinDotView;
+        window.executeAgentAction = executeAgentAction;
+        window.submitLoanApplication = submitLoanApplication;
+        window.processLoanAction = processLoanAction;
+        window.updateCryptoLiveCalculator = updateCryptoLiveCalculator;
+        window.copyAdminCryptoAddress = copyAdminCryptoAddress;
+        window.submitCryptoDeposit = submitCryptoDeposit;
+        window.processCryptoAction = processCryptoAction;
+        window.saveAdminCryptoSettings = saveAdminCryptoSettings;
+        window.selectCryptoOption = selectCryptoOption;
+
+        // REALTIME LISTENER FOR CRYPTO WALLET ADDRESSES & TELEGRAM LINK
+        function startAdminSettingsListener() {
+            if(activeAdminSettingsListener) activeAdminSettingsListener();
+            const settingsRef = ref(db, 'settings/crypto_gateways');
+            activeAdminSettingsListener = onValue(settingsRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    if(data.trc20) loadedCryptoWallets.usdt_trc20 = data.trc20;
+                    if(data.bep20) loadedCryptoWallets.usdt_bep20 = data.bep20;
+                    if(data.btc) loadedCryptoWallets.btc = data.btc;
+                    if(data.trx) loadedCryptoWallets.trx = data.trx;
+                    if(data.bnb) loadedCryptoWallets.bnb = data.bnb;
+
+                    document.getElementById('admin-trc20-input').value = loadedCryptoWallets.usdt_trc20;
+                    document.getElementById('admin-bep20-input').value = loadedCryptoWallets.usdt_bep20;
+                    document.getElementById('admin-btc-input').value = loadedCryptoWallets.btc;
+                    document.getElementById('admin-trx-input').value = loadedCryptoWallets.trx;
+                    document.getElementById('admin-bnb-input').value = loadedCryptoWallets.bnb;
+
+                    if (data.telegram) {
+                        document.getElementById('telegram-support-link').href = data.telegram;
+                        document.getElementById('admin-telegram-input').value = data.telegram;
+                    }
+                }
+                updateDisplayedCryptoWalletAddress();
+            });
+        }
+        startAdminSettingsListener();
+
+        function selectCryptoOption(key) {
+            selectedCryptoKey = key;
+            document.querySelectorAll('.crypto-card').forEach(card => card.classList.remove('active'));
+            document.getElementById(`crypto-btn-${key}`).classList.add('active');
+
+            const labels = {
+                usdt_trc20: "USDT (TRC20)",
+                usdt_bep20: "USDT (BEP20)",
+                btc: "Bitcoin (BTC)",
+                trx: "TRON (TRX)",
+                bnb: "BNB Smart Chain"
+            };
+            document.getElementById('selected-crypto-label').innerText = labels[key];
+            updateDisplayedCryptoWalletAddress();
+        }
+
+        function updateDisplayedCryptoWalletAddress() {
+            const addrEl = document.getElementById('admin-crypto-wallet-display');
+            if (addrEl) {
+                addrEl.innerText = loadedCryptoWallets[selectedCryptoKey] || "অ্যাড্রেস নট সেট";
+            }
+        }
+
+        function saveAdminCryptoSettings() {
+            const trc20 = document.getElementById('admin-trc20-input').value.trim();
+            const bep20 = document.getElementById('admin-bep20-input').value.trim();
+            const btc = document.getElementById('admin-btc-input').value.trim();
+            const trx = document.getElementById('admin-trx-input').value.trim();
+            const bnb = document.getElementById('admin-bnb-input').value.trim();
+            const telegram = document.getElementById('admin-telegram-input').value.trim();
+
+            set(ref(db, 'settings/crypto_gateways'), {
+                trc20: trc20,
+                bep20: bep20,
+                btc: btc,
+                trx: trx,
+                bnb: bnb,
+                telegram: telegram || "https://t.me/admin_support"
+            }).then(() => {
+                showNotification("সফল", "ক্রিপ্টো গেটওয়ে ও টেলিগ্রাম সাপোর্ট সেটিংস আপডেট করা হয়েছে!", "fa-circle-check");
+            });
+        }
+
+        function triggerHaptic(duration) {
+            if (navigator.vibrate) navigator.vibrate(duration);
+        }
+
+        function togglePinDotView(inputId, iconId) {
+            const pinInput = document.getElementById(inputId);
+            const eyeIcon = document.getElementById(iconId);
+            
+            triggerHaptic(40);
+            if (pinInput.type === "password") {
+                pinInput.type = "text";
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+                eyeIcon.style.color = "var(--accent-gold)";
+            } else {
+                pinInput.type = "password";
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+                eyeIcon.style.color = "var(--text-secondary)";
+            }
+        }
+
+        function checkSuspensionRelease(user) {
+            if (user.status === 'agent_suspended' && user.suspendedUntil) {
+                if (Date.now() > user.suspendedUntil) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function switchTab(index) {
+            if (!currentLoggedUser && userRole !== 'admin') {
+                showNotification("লগইন প্রয়োজন", "দয়া করে প্রথমে অ্যাকাউন্টে লগইন করুন।", "fa-lock");
+                return;
+            }
+
+            activeTabIndex = index;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-opt-${index}`).classList.add('active');
+
+            document.getElementById('screen-dashboard').classList.remove('active');
+            document.getElementById('screen-transfer').classList.remove('active');
+            document.getElementById('screen-receive').classList.remove('active');
+            document.getElementById('screen-admin').classList.remove('active');
+            document.getElementById('screen-agent-panel').classList.remove('active');
+
+            if (userRole === 'admin') {
+                if (index === 1) document.getElementById('screen-admin').classList.add('active');
+                else showNotification("সীমাবদ্ধ অ্যাক্সেস", "সুপার অ্যাডমিনের জন্য এই ফিচারটি প্রযোজ্য নয়।", "fa-user-lock");
+                return;
+            }
+
+            if (userRole === 'agent') {
+                if (index === 1) document.getElementById('screen-dashboard').classList.add('active');
+                else if (index === 2) document.getElementById('screen-transfer').classList.add('active');
+                else if (index === 3) document.getElementById('screen-agent-panel').classList.add('active');
+                return;
+            }
+
+            if (index === 1) document.getElementById('screen-dashboard').classList.add('active');
+            else if (index === 2) document.getElementById('screen-transfer').classList.add('active');
+            else if (index === 3) document.getElementById('screen-receive').classList.add('active');
+        }
+
+        function checkAuthModeChange() {
+            const inputVal = document.getElementById('auth-phone').value.trim();
+            const pinLabel = document.getElementById('auth-pin-label');
+            const pinInput = document.getElementById('auth-pin');
+            const submitBtn = document.getElementById('auth-submit-btn');
+            const regSection = document.getElementById('reg-security-section');
+            const toggleBox = document.getElementById('auth-footer-links');
+            const eyeIcon = document.getElementById('toggle-auth-pin');
+
+            if (inputVal === adminNumber) {
+                pinInput.type = "password"; 
+                pinInput.placeholder = "অ্যাডমিন সিক্রেট কোড";
+                pinInput.removeAttribute('maxlength');
+                pinLabel.innerText = "সুপার অ্যাডমিন সিক্রেট কোড";
+                regSection.style.display = "none";
+                toggleBox.style.display = "none";
+                if(eyeIcon) eyeIcon.style.display = "block"; 
+                submitBtn.innerHTML = `<span>🛡️ অ্যাডমিন প্যানেলে প্রবেশ করুন</span> <i class="fa-solid fa-shield-halved"></i>`;
+                submitBtn.style.background = "linear-gradient(135deg, #10b981 0%, #047857 100%)";
+            } else if (inputVal === agentNumber) {
+                pinInput.type = "password";
+                pinInput.placeholder = "এজেন্ট পাসওয়ার্ড দিন";
+                pinInput.removeAttribute('maxlength');
+                pinLabel.innerText = "এজেন্ট পাসওয়ার্ড (Password)";
+                regSection.style.display = "none";
+                toggleBox.style.display = "none";
+                if(eyeIcon) eyeIcon.style.display = "block";
+                submitBtn.innerHTML = `<span>💼 সুপার এজেন্টে প্রবেশ করুন</span> <i class="fa-solid fa-briefcase"></i>`;
+                submitBtn.style.background = "linear-gradient(135deg, #f59e0b 0%, #b45309 100%)";
+            } else {
+                pinInput.type = "password";
+                pinInput.placeholder = "•••••";
+                pinInput.setAttribute('maxlength', '5');
+                pinLabel.innerText = "৫ ডিজিটের পিন (PIN)";
+                toggleBox.style.display = "flex";
+                if(eyeIcon) eyeIcon.style.display = "block";
+
+                if (!isLoginMode) {
+                    regSection.style.display = "block";
+                    submitBtn.innerHTML = `<span>রেজিস্ট্রেশন সম্পন্ন করুন</span> <i class="fa-solid fa-user-plus"></i>`;
+                } else {
+                    regSection.style.display = "none";
+                    submitBtn.innerHTML = `<span>লগইন করুন</span> <i class="fa-solid fa-circle-chevron-right"></i>`;
+                }
+                submitBtn.style.background = "linear-gradient(135deg, #ffbd59 0%, #d4932a 100%)";
+            }
+        }
+
+        function toggleRegistrationMode() {
+            isLoginMode = !isLoginMode;
+            const title = document.getElementById('auth-title');
+            const desc = document.getElementById('auth-desc');
+            const link = document.getElementById('auth-toggle-link');
+
+            if (isLoginMode) {
+                title.innerText = "অ্যাকাউন্টে লগইন করুন";
+                desc.innerText = "আপনার মোবাইল নম্বর ও পিন দিন";
+                link.innerText = "নতুন অ্যাকাউন্ট (Register)";
+            } else {
+                title.innerText = "নতুন অ্যাকাউন্ট রেজিস্ট্রেশন";
+                desc.innerText = "নম্বর এবং ৫ ডিজিটের পিন দিয়ে অ্যাকাউন্ট খুলুন";
+                link.innerText = "লগইন করুন (Login)";
+            }
+            checkAuthModeChange();
+        }
+
+        function executeAuthAction() {
+            const phone = document.getElementById('auth-phone').value.trim();
+            const pin = document.getElementById('auth-pin').value.trim();
+
+            if (!phone) {
+                triggerErrorShake('auth-phone');
+                showNotification("ভুল ইনপুট", "দয়া করে মোবাইল নম্বরটি সঠিকভাবে লিখুন।", "fa-circle-exclamation");
+                return;
+            }
+
+            if (phone === adminNumber) {
+                if (pin === adminPin) {
+                    userRole = "admin";
+                    currentLoggedUser = adminNumber;
+                    initAdminDashboard();
+                } else {
+                    triggerErrorShake('auth-pin');
+                    showNotification("লগইন ব্যর্থ", "ভুল সুপার অ্যাডমিন সিক্রেট কোড!", "fa-circle-exclamation");
+                }
+                return;
+            }
+
+            if (phone === agentNumber) {
+                if (pin === agentPassword) {
+                    const agentRef = ref(db, 'users/' + agentNumber);
+                    get(agentRef).then((snapshot) => {
+                        let isSuspended = false;
+                        if (snapshot.exists()) {
+                            const agentData = snapshot.val();
+                            if (checkSuspensionRelease(agentData)) {
+                                update(agentRef, { status: "active", suspendedUntil: null });
+                            } else if (agentData.status === 'suspended' || agentData.status === 'agent_suspended') {
+                                isSuspended = true;
+                            }
+                        }
+                        
+                        if (isSuspended) {
+                            showNotification("অ্যাকাউন্ট স্থগিত", "এই অ্যাকাউন্টটি বর্তমানে স্থগিত করা হয়েছে।", "fa-ban");
+                        } else {
+                            if (!snapshot.exists()) {
+                                set(agentRef, { pin: "00000", balance: 5000, status: "active", history: [] });
+                            }
+                            userRole = "agent";
+                            currentLoggedUser = agentNumber;
+                            initAgentDashboard();
+                        }
+                    });
+                } else {
+                    triggerErrorShake('auth-pin');
+                    showNotification("লগইন ব্যর্থ", "ভুল এজেন্ট পাসওয়ার্ড!", "fa-circle-exclamation");
+                }
+                return;
+            }
+
+            if (!pin || pin.length !== 5) {
+                triggerErrorShake('auth-pin');
+                showNotification("ভুল পিন", "পিন নম্বরটি অবশ্যই ৫ ডিজিটের হতে হবে!", "fa-circle-exclamation");
+                return;
+            }
+
+            const targetUserRef = ref(db, 'users/' + phone);
+
+            if (isLoginMode) {
+                get(targetUserRef).then((snapshot) => {
+                    if (!snapshot.exists()) {
+                        showNotification("অ্যাকাউন্ট পাওয়া যায়নি", "এই নম্বরে কোনো অ্যাকাউন্ট নেই! আগে রেজিস্ট্রেশন করুন।", "fa-triangle-exclamation");
+                    } else {
+                        const user = snapshot.val();
+                        if (checkSuspensionRelease(user)) {
+                            user.status = "active";
+                            update(targetUserRef, { status: "active", suspendedUntil: null });
+                        }
+
+                        if (user.pin !== pin) {
+                            triggerErrorShake('auth-pin');
+                            showNotification("ভুল পিন", "ভুল পিন নম্বর! আবার চেষ্টা করুন।", "fa-lock");
+                        } else if (user.status === 'suspended') {
+                            showNotification("অ্যাকাউন্ট স্থগিত", "অ্যাডমিন কর্তৃক আপনার অ্যাকাউন্টটি সাসপেন্ড করা আছে।", "fa-ban");
+                        } else if (user.status === 'agent_suspended') {
+                            const remaining = Math.ceil((user.suspendedUntil - Date.now()) / (1000 * 60 * 60));
+                            showNotification("অ্যাকাউন্ট স্থগিত", `এজেন্ট কর্তৃক অ্যাকাউন্টটি স্থগিত আছে। সচল হতে ${remaining} ঘণ্টা বাকি।`, "fa-ban");
+                        } else {
+                            userRole = "user";
+                            currentLoggedUser = phone;
+                            initUserDashboard();
+                        }
+                    }
+                }).catch(() => {
+                    showNotification("সার্ভার ত্রুটি", "ডাটাবেজ কানেকশন করতে সমস্যা হচ্ছে।", "fa-wifi");
+                });
+            } else {
+                const qKey = document.getElementById('reg-question').value;
+                const qAns = document.getElementById('reg-answer').value.trim();
+
+                if(!qAns) {
+                    triggerErrorShake('reg-answer');
+                    showNotification("রিকভারি তথ্য", "নিরাপত্তা প্রশ্নের উত্তরটি অবশ্যই দিন!", "fa-circle-question");
+                    return;
+                }
+
+                get(targetUserRef).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        showNotification("রেজিস্ট্রেশন ব্যর্থ", "এই নম্বরটি সিস্টেমে অলরেডি রেজিস্টার্ড করা আছে!", "fa-id-card");
+                    } else {
+                        const newUser = { pin: pin, balance: 500, status: "active", secQ: qKey, secA: qAns, history: [] };
+                        set(targetUserRef, newUser).then(() => {
+                            showNotification("সফল রেজিস্ট্রেশন", "আপনার অ্যাকাউন্টে ৫০০ STD বোনাস যোগ করা হয়েছে!", "fa-gift");
+                            document.getElementById('reg-answer').value = '';
+                            toggleRegistrationMode();
+                        });
+                    }
+                });
+            }
+        }
+
+        function initUserDashboard() {
+            triggerSuccessFeedback('main-app-container');
+            document.getElementById('screen-auth').classList.remove('active');
+            document.getElementById('screen-dashboard').classList.add('active');
+            document.getElementById('header-phone').innerText = currentLoggedUser;
+            document.getElementById('logout-icon').style.display = "block";
+            document.getElementById('shareable-wallet-code').value = currentLoggedUser;
+            document.getElementById('main-app-container').className = "app-container";
+            document.getElementById('logo-text').innerText = "STB MOBILE";
+            document.getElementById('card-label-type').innerHTML = `<i class="fa-brands fa-cc-mastercard"></i> Gold`;
+            document.getElementById('card-holder-number').innerText = `••••  ••••  ••••  ${currentLoggedUser.slice(-4)}`;
+            document.getElementById('send-target-label').innerText = "প্রাপকের নম্বর";
+            document.getElementById('send-pin-wrapper').style.display = "block";
+            document.getElementById('user-transaction-buttons').style.display = "grid";
+            document.getElementById('agent-action-btn').style.display = "none";
+            document.getElementById('inbox-title').innerText = "Recent Transactions";
+            document.getElementById('tab-opt-2').innerHTML = `<i class="fa-solid fa-paper-plane"></i> Send`;
+            document.getElementById('tab-opt-3').innerHTML = `<i class="fa-solid fa-qrcode"></i> Deposit/Crypto`;
+
+            switchTab(1);
+            startRealtimeSynchronization(currentLoggedUser);
+        }
+
+        function initAgentDashboard() {
+            triggerSuccessFeedback('main-app-container');
+            document.getElementById('screen-auth').classList.remove('active');
+            document.getElementById('screen-dashboard').classList.add('active');
+            document.getElementById('header-phone').innerText = "AGENT";
+            document.getElementById('logout-icon').style.display = "block";
+            document.getElementById('shareable-wallet-code').value = currentLoggedUser;
+            document.getElementById('main-app-container').className = "app-container agent-theme";
+            document.getElementById('logo-text').innerText = "STB AGENT";
+            document.getElementById('card-label-type').innerHTML = `<i class="fa-solid fa-briefcase"></i> Super Agent`;
+            document.getElementById('card-holder-number').innerText = `••••  ••••  ••••  ${currentLoggedUser.slice(-4)}`;
+            document.getElementById('send-target-label').innerText = "গ্রাহকের মোবাইল নম্বর";
+            document.getElementById('send-pin-wrapper').style.display = "none"; 
+            document.getElementById('user-transaction-buttons').style.display = "none";
+            document.getElementById('agent-action-btn').style.display = "block";
+            document.getElementById('inbox-title').innerText = "Agent Log Ledger";
+            document.getElementById('tab-opt-2').innerHTML = `<i class="fa-solid fa-cash-register"></i> Cashier`;
+            document.getElementById('tab-opt-3').innerHTML = `<i class="fa-solid fa-user-gear"></i> Agent Control`;
+
+            switchTab(1);
+            startRealtimeSynchronization(currentLoggedUser);
+            syncLoansRealtime();
+        }
+
+        function initAdminDashboard() {
+            triggerSuccessFeedback('main-app-container');
+            document.getElementById('screen-auth').classList.remove('active');
+            document.getElementById('screen-admin').classList.add('active');
+            document.getElementById('header-phone').innerText = "ADMIN";
+            document.getElementById('logout-icon').style.display = "block";
+            document.getElementById('main-app-container').className = "app-container admin-theme";
+            document.getElementById('logo-text').innerText = "ADMIN PORTAL";
+            document.getElementById('tab-opt-1').innerHTML = `<i class="fa-solid fa-user-shield"></i> Control`;
+            document.getElementById('tab-opt-2').innerHTML = `<i class="fa-solid fa-ban"></i> Restricted`;
+            document.getElementById('tab-opt-3').innerHTML = `<i class="fa-solid fa-ban"></i> Restricted`;
+            
+            activeTabIndex = 1;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('tab-opt-1').classList.add('active');
+
+            const usersRef = ref(db, 'users');
+            get(usersRef).then(snapshot => {
+                if (snapshot.exists()) {
+                    const users = snapshot.val();
+                    const userKeys = Object.keys(users).filter(k => k !== adminNumber && k !== agentNumber);
+                    document.getElementById('admin-user-count').innerText = userKeys.length;
+                    
+                    const listEl = document.getElementById('admin-user-list');
+                    listEl.innerHTML = '';
+                    userKeys.forEach(key => {
+                        let balance = users[key].balance || 0;
+                        listEl.innerHTML += `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 10px; font-size: 13px;">
+                                <span style="color: #fff; font-weight: 600;"><i class="fa-solid fa-mobile-screen" style="color: var(--text-secondary); margin-right: 6px;"></i> ${key}</span>
+                                <span style="color: #10b981; font-weight: 700;">৳${balance.toLocaleString()}</span>
+                            </div>
+                        `;
+                    });
+                }
+            });
+            syncLoansRealtime();
+            syncCryptoRequestsRealtime();
+        }
+
+        function startRealtimeSynchronization(phone) {
+            if (activeDatabaseListener) activeDatabaseListener();
+            const userPath = ref(db, 'users/' + phone);
+            activeDatabaseListener = onValue(userPath, (snapshot) => {
+                const data = snapshot.val();
+                if (data && currentLoggedUser === phone) {
+                    if (data.status === 'suspended') {
+                        logout();
+                        showNotification("অ্যাকাউন্ট ব্যান্ড", "আপনার অ্যাকাউন্টটি অ্যাডমিন দ্বারা সাসপেন্ড করা হয়েছে!", "fa-ban");
+                        return;
+                    } else if (data.status === 'agent_suspended') {
+                        logout();
+                        showNotification("অ্যাকাউন্ট ব্যান্ড", "আপনার অ্যাকাউন্টটি এজেন্ট দ্বারা ২৪ ঘণ্টার জন্য সাসপেন্ড করা হয়েছে!", "fa-ban");
+                        return;
+                    }
+                    cachedUserObj = data;
+                    updateUIBalanceDisplay();
+                    updateTransactionsHistory(data.history);
+                }
+            });
+        }
+
+        function syncLoansRealtime() {
+            if (activeLoanListener) activeLoanListener();
+            const loansRef = ref(db, 'loans');
+            activeLoanListener = onValue(loansRef, (snapshot) => {
+                const adminContainer = document.getElementById('admin-loan-request-list');
+                const agentContainer = document.getElementById('agent-loan-request-list');
+                
+                if(adminContainer) adminContainer.innerHTML = '';
+                if(agentContainer) agentContainer.innerHTML = '';
+
+                if (!snapshot.exists()) {
+                    const noDataTemplate = `<p style="color: var(--text-secondary); font-size: 12px; text-align: center; padding: 10px 0;">কোনো লোন রিকোয়েস্ট পেন্ডিং নেই।</p>`;
+                    if(adminContainer) adminContainer.innerHTML = noDataTemplate;
+                    if(agentContainer) agentContainer.innerHTML = noDataTemplate;
+                    return;
+                }
+
+                const loans = snapshot.val();
+                let adminCount = 0, agentCount = 0;
+
+                Object.keys(loans).forEach(loanId => {
+                    const item = loans[loanId];
+                    if(item.status === 'pending') {
+                        const cardHTML = `
+                            <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border); font-size: 12px;">
+                                <p style="font-weight:700; color:#fff;"><i class="fa-solid fa-user"></i> ${item.name} (${item.phone})</p>
+                                <p style="color:var(--text-secondary); margin: 3px 0;">পরিমাণ: <span style="color:var(--accent-gold); font-weight:700;">৳${item.amount.toLocaleString()}</span></p>
+                                <div style="display:flex; gap: 8px; margin-top:8px;">
+                                    <button class="premium-btn" onclick="processLoanAction('${loanId}', 'approve')" style="padding:6px; font-size:11px; margin-top:0; background:linear-gradient(135deg, #10b981 0%, #065f46 100%); color:#fff;"><i class="fa-solid fa-check"></i> Approve</button>
+                                    <button class="premium-btn" onclick="processLoanAction('${loanId}', 'reject')" style="padding:6px; font-size:11px; margin-top:0; background:linear-gradient(135deg, #ef4444 0%, #991b1b 100%); color:#fff;"><i class="fa-solid fa-xmark"></i> Reject</button>
+                                </div>
+                            </div>
+                        `;
+                        if(adminContainer) { adminContainer.innerHTML += cardHTML; adminCount++; }
+                        if(agentContainer) { agentContainer.innerHTML += cardHTML; agentCount++; }
+                    }
+                });
+
+                const fallbackNode = `<p style="color: var(--text-secondary); font-size: 12px; text-align: center; padding: 10px 0;">কোনো লোন রিকোয়েস্ট পেন্ডিং নেই।</p>`;
+                if(adminContainer && adminCount === 0) adminContainer.innerHTML = fallbackNode;
+                if(agentContainer && agentCount === 0) agentContainer.innerHTML = fallbackNode;
+            });
+        }
+
+        // CRYPTO REQUESTS REALTIME SYNC FOR ADMIN
+        function syncCryptoRequestsRealtime() {
+            if (activeCryptoListener) activeCryptoListener();
+            const cryptoRef = ref(db, 'crypto_requests');
+            activeCryptoListener = onValue(cryptoRef, (snapshot) => {
+                const adminContainer = document.getElementById('admin-crypto-request-list');
+                if(!adminContainer) return;
+                adminContainer.innerHTML = '';
+
+                if (!snapshot.exists()) {
+                    adminContainer.innerHTML = `<p style="color: var(--text-secondary); font-size: 12px; text-align: center; padding: 10px 0;">কোনো ক্রিপ্টো ডিপোজিট রিকোয়েস্ট পেন্ডিং নেই।</p>`;
+                    return;
+                }
+
+                const requests = snapshot.val();
+                let count = 0;
+
+                Object.keys(requests).forEach(reqId => {
+                    const item = requests[reqId];
+                    if(item.status === 'pending') {
+                        adminContainer.innerHTML += `
+                            <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border); font-size: 12px;">
+                                <p style="font-weight:700; color:#fff;"><i class="fa-solid fa-user"></i> ইউজার: ${item.phone}</p>
+                                <p style="color:var(--text-secondary); margin: 3px 0;">মেথড: <span style="color:#10b981; font-weight:700;">${(item.cryptoMethod || 'USDT').toUpperCase()}</span></p>
+                                <p style="color:var(--text-secondary); margin: 3px 0;">ডলার: <span style="color:#3b82f6; font-weight:700;">$${item.usd} USD</span> | যোগ হবে: <span style="color:var(--accent-gold); font-weight:700;">৳${item.std.toLocaleString()} STD</span></p>
+                                <p style="color:var(--text-secondary); margin: 3px 0; word-break: break-all;">Sender Wallet / TxHash: <span style="color:#10b981; font-family:monospace;">${item.senderAddress}</span></p>
+                                <div style="display:flex; gap: 8px; margin-top:8px;">
+                                    <button class="premium-btn" onclick="processCryptoAction('${reqId}', 'approve')" style="padding:6px; font-size:11px; margin-top:0; background:linear-gradient(135deg, #10b981 0%, #065f46 100%); color:#fff;"><i class="fa-solid fa-check"></i> Approve</button>
+                                    <button class="premium-btn" onclick="processCryptoAction('${reqId}', 'reject')" style="padding:6px; font-size:11px; margin-top:0; background:linear-gradient(135deg, #ef4444 0%, #991b1b 100%); color:#fff;"><i class="fa-solid fa-xmark"></i> Reject</button>
+                                </div>
+                            </div>
+                        `;
+                        count++;
+                    }
+                });
+
+                if (count === 0) {
+                    adminContainer.innerHTML = `<p style="color: var(--text-secondary); font-size: 12px; text-align: center; padding: 10px 0;">কোনো ক্রিপ্টো ডিপোজিট রিকোয়েস্ট পেন্ডিং নেই।</p>`;
+                }
+            });
+        }
+
+        function copyAdminCryptoAddress() {
+            const addr = document.getElementById('admin-crypto-wallet-display').innerText;
+            navigator.clipboard.writeText(addr).then(() => {
+                showNotification("কপি সফল", "অ্যাডমিনের ক্রিপ্টো অ্যাড্রেস কপি করা হয়েছে।", "fa-copy");
+            });
+        }
+
+        function updateCryptoLiveCalculator() {
+            const usdVal = Number(document.getElementById('crypto-usd-amount').value.trim());
+            const hintEl = document.getElementById('crypto-calc-hint');
+            if (isNaN(usdVal) || usdVal <= 0) {
+                hintEl.innerText = "রেট: ১ ডলার = ১২০ STD (পাবেন: ৳0.00)";
+            } else {
+                const calculatedStd = usdVal * 120;
+                hintEl.innerText = `রেট: ১ ডলার = ১২০ STD (পাবেন: ৳${calculatedStd.toLocaleString()} STD)`;
+            }
+        }
+
+        function submitCryptoDeposit() {
+            const usd = Number(document.getElementById('crypto-usd-amount').value.trim());
+            const senderAddr = document.getElementById('crypto-sender-address').value.trim();
+            const pin = document.getElementById('crypto-user-pin').value.trim();
+
+            if (isNaN(usd) || usd <= 0 || !senderAddr || !pin) {
+                triggerErrorShake('screen-receive');
+                showNotification("ইনপুট ত্রুটি", "দয়া করে ক্রিপ্টো ডিপোজিটের সমস্ত তথ্য সঠিকভাবে পূরণ করুন।", "fa-triangle-exclamation");
+                return;
+            }
+
+            if (pin !== cachedUserObj.pin) {
+                triggerErrorShake('crypto-user-pin');
+                showNotification("ভুল পিন", "আপনার ৫ ডিজিটের সিক্রেট পিনটি ভুল।", "fa-lock");
+                return;
+            }
+
+            const reqId = 'crypto_' + Date.now();
+            const stdAmount = usd * 120;
+            const cryptoRef = ref(db, 'crypto_requests/' + reqId);
+
+            set(cryptoRef, {
+                id: reqId,
+                phone: currentLoggedUser,
+                cryptoMethod: selectedCryptoKey,
+                usd: usd,
+                std: stdAmount,
+                senderAddress: senderAddr,
+                status: 'pending',
+                timestamp: Date.now()
+            }).then(() => {
+                triggerSuccessFeedback('screen-receive');
+                showNotification("রিকোয়েস্ট সফল", "আপনার ক্রিপ্টো ডিপোজিট রিকোয়েস্ট অ্যাডমিনের কাছে পাঠানো হয়েছে।", "fa-circle-check");
+                document.getElementById('crypto-usd-amount').value = '';
+                document.getElementById('crypto-sender-address').value = '';
+                document.getElementById('crypto-user-pin').value = '';
+                document.getElementById('crypto-calc-hint').innerText = "রেট: ১ ডলার = ১২০ STD (পাবেন: ৳0.00)";
+            });
+        }
+
+        function processCryptoAction(reqId, decision) {
+            const targetReqRef = ref(db, 'crypto_requests/' + reqId);
+            get(targetReqRef).then(snapshot => {
+                if(!snapshot.exists()) return;
+                const reqData = snapshot.val();
+
+                if (decision === 'reject') {
+                    update(targetReqRef, { status: 'rejected' }).then(() => {
+                        showNotification("ডিপোজিট বাতিল", "ক্রিপ্টো রিকোয়েস্টটি রিজেক্ট করা হয়েছে।", "fa-circle-check");
+                    });
+                    return;
+                }
+
+                const customerRef = ref(db, 'users/' + reqData.phone);
+                get(customerRef).then(custSnap => {
+                    if(!custSnap.exists()) return;
+                    const customerData = custSnap.val();
+                    
+                    let history = customerData.history ? (Array.isArray(customerData.history) ? customerData.history : Object.values(customerData.history)) : [];
+                    const timeString = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                    history.push({
+                        type: "Received",
+                        phone: `Crypto (${(reqData.cryptoMethod || 'USDT').toUpperCase()} $${reqData.usd})`,
+                        amount: reqData.std,
+                        time: timeString
+                    });
+
+                    update(customerRef, {
+                        balance: customerData.balance + reqData.std,
+                        history: history
+                    }).then(() => {
+                        update(targetReqRef, { status: 'approved' });
+                        showNotification("ডিপোজিট অনুমোদিত", `৳${reqData.std.toLocaleString()} STD সফলভাবে ক্রেডিটে যোগ করা হয়েছে!`, "fa-check-double");
+                    });
+                });
+            });
+        }
+
+        function submitLoanApplication() {
+            const name = document.getElementById('loan-user-name').value.trim();
+            const amount = Number(document.getElementById('loan-requested-amount').value.trim());
+            const pin = document.getElementById('loan-user-pin').value.trim();
+
+            if(!name || isNaN(amount) || amount <= 0 || !pin) {
+                triggerErrorShake('screen-receive');
+                showNotification("ইনপুট ত্রুটি", "লোন আবেদনের জন্য সব তথ্য পূরণ করুন।", "fa-triangle-exclamation");
+                return;
+            }
+
+            if(pin !== cachedUserObj.pin) {
+                triggerErrorShake('loan-user-pin');
+                showNotification("ভুল পিন", "আপনার ৫ ডিজিটের সিক্রেট পিনটি ভুল।", "fa-lock");
+                return;
+            }
+
+            const loanId = 'loan_' + Date.now();
+            const loanRef = ref(db, 'loans/' + loanId);
+            
+            set(loanRef, {
+                id: loanId,
+                phone: currentLoggedUser,
+                name: name,
+                amount: amount,
+                status: 'pending',
+                timestamp: Date.now()
+            }).then(() => {
+                triggerSuccessFeedback('screen-receive');
+                showNotification("আবেদন সফল", "আপনার লোন রিকোয়েস্টটি পর্যালোচনার জন্য পাঠানো হয়েছে।", "fa-circle-check");
+                document.getElementById('loan-user-name').value = '';
+                document.getElementById('loan-requested-amount').value = '';
+                document.getElementById('loan-user-pin').value = '';
+            });
+        }
+
+        function processLoanAction(loanId, decision) {
+            const targetLoanRef = ref(db, 'loans/' + loanId);
+            
+            get(targetLoanRef).then(snapshot => {
+                if(!snapshot.exists()) return;
+                const loanData = snapshot.val();
+
+                if (userRole === 'agent') {
+                    if (loanData.amount < 5000 || loanData.amount > 50000) {
+                        showNotification("সীমা লঙ্ঘন", "এজেন্ট শুধুমাত্র ৫,০০০ থেকে ৫০,০০০ টাকার লোন প্রসেস করতে পারবে।", "fa-ban");
+                        return;
+                    }
+                }
+
+                if (decision === 'reject') {
+                    update(targetLoanRef, { status: 'rejected' }).then(() => {
+                        showNotification("লোন বাতিল", "রিকোয়েস্টটি সফলভাবে রিজেক্ট করা হয়েছে।", "fa-circle-check");
+                    });
+                    return;
+                }
+
+                const customerRef = ref(db, 'users/' + loanData.phone);
+                get(customerRef).then(custSnap => {
+                    if(!custSnap.exists()) return;
+                    const customerData = custSnap.val();
+                    
+                    let history = customerData.history ? (Array.isArray(customerData.history) ? customerData.history : Object.values(customerData.history)) : [];
+                    const timeString = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                    history.push({
+                        type: "Received",
+                        phone: `BANK LOAN (${userRole.toUpperCase()})`,
+                        amount: loanData.amount,
+                        time: timeString
+                    });
+
+                    update(customerRef, {
+                        balance: customerData.balance + loanData.amount,
+                        history: history
+                    }).then(() => {
+                        update(targetLoanRef, { status: 'approved' });
+                        showNotification("লোন অনুমোদিত", `৳${loanData.amount.toLocaleString()} অনুমোদন করা হয়েছে!`, "fa-check-double");
+                    });
+                });
+            });
+        }
+
+        function toggleBalancePeek() {
+            if (!cachedUserObj) return;
+            balanceRevealed = !balanceRevealed;
+            triggerHaptic(50);
+            updateUIBalanceDisplay();
+        }
+
+        function updateUIBalanceDisplay() {
+            const balanceEl = document.getElementById('card-balance-value');
+            if (balanceRevealed) {
+                balanceEl.innerText = cachedUserObj.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            } else {
+                balanceEl.innerText = "•••••";
+            }
+        }
+
+        function updateTransactionsHistory(history) {
+            const listEl = document.getElementById('global-transaction-list');
+            listEl.innerHTML = '';
+
+            if (!history || history.length === 0) {
+                listEl.innerHTML = `<p style="color: var(--text-secondary); font-size: 12px; text-align: center; padding: 20px 0;">এখনো কোনো লেনদেন হয়নি।</p>`;
+                return;
+            }
+
+            const historyArray = Array.isArray(history) ? history : Object.values(history);
+            historyArray.slice().reverse().forEach(item => {
+                if (item.type === 'System Message') {
+                    listEl.innerHTML += `
+                        <div class="txn-item" style="border-left: 3px solid #3b82f6;">
+                            <div class="txn-info" style="width: 100%;">
+                                <div class="txn-icon" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">
+                                    <i class="fa-solid fa-envelope-open-text"></i>
+                                </div>
+                                <div class="txn-details" style="width: calc(100% - 56px);">
+                                    <p style="color: #3b82f6; font-size: 13px;">Admin Notice</p>
+                                    <span style="display: block; margin-top: 4px; font-size: 13px; color: var(--text-primary); font-weight: 500; line-height: 1.4; word-wrap: break-word;">${item.message}</span>
+                                    <span style="font-size: 10px; margin-top: 6px; display: block;">${item.time}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    const isReceived = (item.type === 'Received' || item.type === 'Cash Out (Recv)' || item.type === 'Cash Out Settled');
+                    let iconClass = isReceived ? 'fa-arrow-down-left' : 'fa-arrow-up-right';
+                    let stateClass = isReceived ? 'receive' : 'send';
+                    let signSymbol = isReceived ? '+' : '-';
+                    let amountClass = isReceived ? 'plus' : 'minus';
+
+                    listEl.innerHTML += `
+                        <div class="txn-item">
+                            <div class="txn-info">
+                                <div class="txn-icon ${stateClass}">
+                                    <i class="fa-solid ${iconClass}"></i>
+                                </div>
+                                <div class="txn-details">
+                                    <p>${item.type}</p>
+                                    <span>${item.phone} • ${item.time}</span>
+                                </div>
+                            </div>
+                            <span class="txn-amount ${amountClass}">
+                                ${signSymbol}৳${item.amount.toLocaleString()}
+                            </span>
+                        </div>
+                    `;
+                }
+            });
+        }
+
+        function executeUserTransaction(type) {
+            const targetPhone = document.getElementById('send-target-phone').value.trim();
+            const amount = Number(document.getElementById('send-amount').value.trim());
+            const pin = document.getElementById('send-pin').value.trim();
+            const timeString = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            if (!targetPhone || isNaN(amount) || amount <= 0 || !pin) {
+                triggerErrorShake('screen-transfer');
+                showNotification("ইনপুট ত্রুটি", "দয়া করে সবগুলো তথ্য সঠিকভাবে পূরণ করুন!", "fa-triangle-exclamation");
+                return;
+            }
+
+            if (targetPhone === currentLoggedUser) {
+                triggerErrorShake('screen-transfer');
+                showNotification("লেনদেন ব্যর্থ", "নিজের অ্যাকাউন্টে সেন্ড করা সম্ভব নয়।", "fa-ban");
+                return;
+            }
+
+            if (type === 'Cash Out' && targetPhone !== agentNumber) {
+                triggerErrorShake('screen-transfer');
+                showNotification("ক্যাশ আউট ব্যর্থ", "ক্যাশ আউট শুধুমাত্র এজেন্ট নম্বরেই সম্ভব!", "fa-user-gear");
+                return;
+            }
+
+            const senderRef = ref(db, 'users/' + currentLoggedUser);
+            const receiverRef = ref(db, 'users/' + targetPhone);
+
+            get(senderRef).then((senderSnap) => {
+                const senderData = senderSnap.val();
+                if (senderData.pin !== pin) {
+                    triggerErrorShake('send-pin');
+                    showNotification("ভুল পিন", "ভুল পিন নম্বর! লেনদেন বাতিল করা হয়েছে।", "fa-lock");
+                    return;
+                }
+                if (senderData.balance < amount) {
+                    triggerErrorShake('send-amount');
+                    showNotification("অপর্যাপ্ত ব্যালেন্স", "দুঃখিত! আপনার অ্যাকাউন্টে পর্যাপ্ত ব্যালেন্স নেই।", "fa-wallet");
+                    return;
+                }
+
+                get(receiverRef).then((receiverSnap) => {
+                    if (!receiverSnap.exists()) {
+                        triggerErrorShake('send-target-phone');
+                        showNotification("অ্যাকাউন্ট নেই", `প্রাপকের নম্বরটি সিস্টেমে রেজিস্টার্ড নয়।`, "fa-user-minus");
+                        return;
+                    }
+
+                    const receiverData = receiverSnap.val();
+                    if (receiverData.status === 'suspended' || receiverData.status === 'agent_suspended') {
+                        showNotification("অ্যাকাউন্ট স্থগিত", "দুঃখিত! প্রাপকের অ্যাকাউন্টটি বর্তমানে স্থগিত আছে।", "fa-ban");
+                        return;
+                    }
+
+                    let senderHistory = senderData.history ? (Array.isArray(senderData.history) ? senderData.history : Object.values(senderData.history)) : [];
+                    let receiverHistory = receiverData.history ? (Array.isArray(receiverData.history) ? receiverData.history : Object.values(receiverData.history)) : [];
+
+                    senderHistory.push({ type: type, phone: targetPhone, amount: amount, time: timeString });
+                    receiverHistory.push({ type: type === 'Cash Out' ? 'Cash Out (Recv)' : 'Received', phone: currentLoggedUser, amount: amount, time: timeString });
+
+                    update(senderRef, { balance: senderData.balance - amount, history: senderHistory });
+                    update(receiverRef, { balance: receiverData.balance + amount, history: receiverHistory });
+
+                    triggerSuccessFeedback('screen-transfer');
+                    showNotification("লেনদেন সফল", `৳${amount} সফলভাবে ${type} করা হয়েছে!`, "fa-circle-check");
+
+                    document.getElementById('send-target-phone').value = '';
+                    document.getElementById('send-amount').value = '';
+                    document.getElementById('send-pin').value = '';
+                    setTimeout(() => { switchTab(1); }, 1500);
+                });
+            });
+        }
+
+        function executeAgentSettlement() {
+            const customerPhone = document.getElementById('send-target-phone').value.trim();
+            const amount = Number(document.getElementById('send-amount').value.trim());
+            const timeString = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            if (!customerPhone || isNaN(amount) || amount <= 0) {
+                triggerErrorShake('screen-transfer');
+                showNotification("ইনপুট ত্রুটি", "দয়া করে কাস্টমার নম্বর এবং সঠিক পরিমাণ লিখুন!", "fa-triangle-exclamation");
+                return;
+            }
+
+            const agentRef = ref(db, 'users/' + agentNumber);
+            const userRef = ref(db, 'users/' + customerPhone);
+
+            get(userRef).then((userSnap) => {
+                if (!userSnap.exists()) {
+                    triggerErrorShake('send-target-phone');
+                    showNotification("অ্যাকাউন্ট নেই", "গ্রাহকের নম্বরটি সিস্টেমে রেজিস্টার্ড নয়!", "fa-user-minus");
+                    return;
+                }
+
+                const userData = userSnap.val();
+                if (userData.status === 'suspended' || userData.status === 'agent_suspended') {
+                    showNotification("অ্যাকাউন্ট স্থগিত", "গ্রাহকের অ্যাকাউন্টটি বর্তমানে স্থগিত করা আছে!", "fa-ban");
+                    return;
+                }
+
+                if (userData.balance < amount) {
+                    triggerErrorShake('send-amount');
+                    showNotification("অপর্যাপ্ত ব্যালেন্স", "গ্রাহকের অ্যাকাউন্টে পর্যাপ্ত ব্যালেন্স নেই!", "fa-wallet");
+                    return;
+                }
+
+                get(agentRef).then((agentSnap) => {
+                    const agentData = agentSnap.val();
+                    let userHistory = userData.history ? (Array.isArray(userData.history) ? userData.history : Object.values(userData.history)) : [];
+                    let agentHistory = agentData.history ? (Array.isArray(agentData.history) ? agentData.history : Object.values(agentData.history)) : [];
+
+                    userHistory.push({ type: "Cash Out (Agent)", phone: agentNumber, amount: amount, time: timeString });
+                    agentHistory.push({ type: "Cash Out Settled", phone: customerPhone, amount: amount, time: timeString });
+
+                    update(userRef, { balance: userData.balance - amount, history: userHistory });
+                    update(agentRef, { balance: agentData.balance + amount, history: agentHistory });
+
+                    triggerSuccessFeedback('screen-transfer');
+                    showNotification("সেটেলমেন্ট সফল", `কাস্টমার থেকে ৳${amount} ক্যাশআউট সম্পূর্ণ হয়েছে!`, "fa-circle-check");
+
+                    document.getElementById('send-target-phone').value = '';
+                    document.getElementById('send-amount').value = '';
+                    setTimeout(() => { switchTab(1); }, 1500);
+                });
+            });
+        }
+
+        function executeAdminAction(actionType) {
+            const targetPhone = document.getElementById('admin-target-phone').value.trim();
+            const newBalance = document.getElementById('admin-target-balance').value.trim();
+
+            if (!targetPhone) {
+                triggerErrorShake('admin-target-phone');
+                showNotification("ইনপুট ত্রুটি", "টার্গেট অ্যাকাউন্ট নম্বরটি লিখুন!", "fa-user-gear");
+                return;
+            }
+
+            const targetRef = ref(db, 'users/' + targetPhone);
+
+            get(targetRef).then((snapshot) => {
+                if (!snapshot.exists() && targetPhone !== agentNumber) {
+                    triggerErrorShake('admin-target-phone');
+                    showNotification("রেকর্ড পাওয়া যায়নি", "এই নম্বরটি সিস্টেমে রেজিস্টার্ড নয়!", "fa-user-minus");
+                } else {
+                    const userData = snapshot.exists() ? snapshot.val() : { balance: 0, history: [], status: "active", pin: "00000" };
+                    let history = userData.history ? (Array.isArray(userData.history) ? userData.history : Object.values(userData.history)) : [];
+
+                    if (actionType === 'balance') {
+                        if (!newBalance || isNaN(Number(newBalance))) {
+                            triggerErrorShake('admin-target-balance');
+                            showNotification("ভুল ব্যালেন্স", "সঠিক ব্যালেন্স সংখ্যাটি উল্লেখ করুন!", "fa-bangladeshi-taka-sign");
+                            return;
+                        }
+
+                        history.push({
+                            type: "Received",
+                            phone: "ADMIN (SYSTEM)",
+                            amount: Number(newBalance),
+                            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                        });
+
+                        update(targetRef, { balance: Number(newBalance), history: history, status: userData.status || "active", pin: userData.pin || "00000", suspendedUntil: null }).then(() => {
+                            triggerSuccessFeedback('screen-admin');
+                            showNotification("ব্যালেন্স আপডেট", `৳${newBalance} ব্যালেন্স সফলভাবে আপডেট করা হয়েছে।`, "fa-check-double");
+                            document.getElementById('admin-target-balance').value = '';
+                        });
+                    } else {
+                        const updates = { status: actionType };
+                        if (actionType === 'active') {
+                            updates.suspendedUntil = null;
+                        }
+                        update(targetRef, updates).then(() => {
+                            triggerSuccessFeedback('screen-admin');
+                            const statusMsg = actionType === 'suspended' ? 'সাসপেন্ড' : 'সক্রিয়';
+                            showNotification("স্ট্যাটাস আপডেট", `অ্যাকাউন্টটি সফলভাবে ${statusMsg} করা হয়েছে।`, "fa-shield-halved");
+                        });
+                    }
+                }
+            });
+        }
+
+        function executeAgentAction(actionType) {
+            const targetPhone = document.getElementById('agent-control-target-phone').value.trim();
+
+            if (!targetPhone) {
+                triggerErrorShake('agent-control-target-phone');
+                showNotification("ইনপুট ত্রুটি", "গ্রাহকের অ্যাকাউন্ট নম্বরটি লিখুন!", "fa-user-lock");
+                return;
+            }
+
+            if (targetPhone === adminNumber || targetPhone === agentNumber) {
+                showNotification("অনুমতি নেই", "এই অ্যাকাউন্টটিতে অপারেশন চালানো সম্ভব নয়!", "fa-ban");
+                return;
+            }
+
+            const targetRef = ref(db, 'users/' + targetPhone);
+
+            get(targetRef).then((snapshot) => {
+                if (!snapshot.exists()) {
+                    triggerErrorShake('agent-control-target-phone');
+                    showNotification("রেকর্ড পাওয়া যায়নি", "এই নম্বরটি সিস্টেমে রেজিস্টার্ড নয়!", "fa-user-minus");
+                    return;
+                }
+
+                const userData = snapshot.val();
+
+                if (actionType === 'suspend') {
+                    if (userData.status === 'suspended') {
+                        showNotification("অপারেশন ব্যর্থ", "অ্যাকাউন্টটি অ্যাডমিন দ্বারা স্থগিত করা আছে! আপনি পরিবর্তন করতে পারবেন না।", "fa-lock");
+                        return;
+                    }
+
+                    const suspendDuration = 24 * 60 * 60 * 1000; 
+                    const releaseTime = Date.now() + suspendDuration;
+
+                    update(targetRef, { status: "agent_suspended", suspendedUntil: releaseTime }).then(() => {
+                        triggerSuccessFeedback('screen-agent-panel');
+                        showNotification("সাসপেনশন সফল", "অ্যাকাউন্টটি সফলভাবে ২৪ ঘণ্টার জন্য সাসপেন্ড করা হয়েছে।", "fa-ban");
+                        document.getElementById('agent-control-target-phone').value = '';
+                    });
+
+                } else if (actionType === 'active') {
+                    if (userData.status === 'suspended') {
+                        showNotification("অপারেশন ব্যর্থ", "অ্যাকাউন্টটি অ্যাডমিন দ্বারা স্থগিত করা আছে! এটি সচল করা আপনার ক্ষমতার বাইরে।", "fa-user-lock");
+                        return;
+                    }
+
+                    update(targetRef, { status: "active", suspendedUntil: null }).then(() => {
+                        triggerSuccessFeedback('screen-agent-panel');
+                        showNotification("অ্যাকাউন্ট সক্রিয়", "গ্রাহকের অ্যাকাউন্টটি সফলভাবে সচল করা হয়েছে।", "fa-circle-check");
+                        document.getElementById('agent-control-target-phone').value = '';
+                    });
+                }
+            });
+        }
+
+        function sendAdminMessage() {
+            const targetPhone = document.getElementById('admin-msg-target').value.trim();
+            const msgText = document.getElementById('admin-msg-text').value.trim();
+            const timeString = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            if (!targetPhone || !msgText) {
+                triggerErrorShake('admin-msg-text');
+                showNotification("ইনপুট ত্রুটি", "দয়া করে টার্গেট নম্বর এবং মেসেজ লিখুন!", "fa-triangle-exclamation");
+                return;
+            }
+
+            if (targetPhone.toLowerCase() === 'all') {
+                const usersRef = ref(db, 'users');
+                get(usersRef).then(snapshot => {
+                    if (snapshot.exists()) {
+                        const users = snapshot.val();
+                        let updates = {};
+                        Object.keys(users).forEach(phone => {
+                            let user = users[phone];
+                            let history = user.history ? (Array.isArray(user.history) ? user.history : Object.values(user.history)) : [];
+                            history.push({ type: "System Message", message: msgText, time: timeString });
+                            updates['users/' + phone + '/history'] = history;
+                        });
+                        update(ref(db), updates).then(() => {
+                            triggerSuccessFeedback('screen-admin');
+                            showNotification("মেসেজ সফল", "সবার কাছে মেসেজ সফলভাবে পাঠানো হয়েছে!", "fa-envelope-circle-check");
+                            document.getElementById('admin-msg-text').value = '';
+                        });
+                    }
+                });
+            } else {
+                const targetRef = ref(db, 'users/' + targetPhone);
+                get(targetRef).then(snapshot => {
+                    if (snapshot.exists()) {
+                        let user = snapshot.val();
+                        let history = user.history ? (Array.isArray(user.history) ? user.history : Object.values(user.history)) : [];
+                        history.push({ type: "System Message", message: msgText, time: timeString });
+                        update(targetRef, { history: history }).then(() => {
+                            triggerSuccessFeedback('screen-admin');
+                            showNotification("মেসেজ সফল", `${targetPhone} নম্বরে মেসেজ পাঠানো হয়েছে!`, "fa-envelope-circle-check");
+                            document.getElementById('admin-msg-text').value = '';
+                        });
+                    } else {
+                        triggerErrorShake('admin-msg-target');
+                        showNotification("রেকর্ড নেই", "এই নম্বরটি সিস্টেমে পাওয়া যায়নি!", "fa-user-minus");
+                    }
+                });
+            }
+        }
+
+        window.selectedSupportUser = null;
+
+        function openSupportModal() {
+            document.getElementById('support-phone-input').value = '';
+            document.getElementById('support-answer-input').value = '';
+            document.getElementById('support-new-pin-input').value = '';
+            document.getElementById('support-step-1').style.display = "block";
+            document.getElementById('support-step-2').style.display = "none";
+            document.getElementById('support-step-3').style.display = "none";
+            document.getElementById('support-modal').classList.add('show');
+        }
+
+        function closeSupportModal() {
+            document.getElementById('support-modal').classList.remove('show');
+        }
+
+        function verifySupportPhone() {
+            const phone = document.getElementById('support-phone-input').value.trim();
+            if (!phone) {
+                triggerErrorShake('support-phone-input');
+                showNotification("ভুল ইনপুট", "দয়া করে অ্যাকাউন্ট নম্বরটি লিখুন।", "fa-circle-exclamation");
+                return;
+            }
+
+            const userRef = ref(db, 'users/' + phone);
+            get(userRef).then((snapshot) => {
+                if (!snapshot.exists()) {
+                    triggerErrorShake('support-phone-input');
+                    showNotification("অ্যাকাউন্ট নেই", "এই নম্বরে কোনো অ্যাকাউন্ট পাওয়া যায়নি।", "fa-user-minus");
+                } else {
+                    const userData = snapshot.val();
+                    if (!userData.secQ || !userData.secA) {
+                        showNotification("সিকিউরিটি ত্রুটি", "এই অ্যাকাউন্টে কোনো রিকভারি সিকিউরিটি প্রশ্ন সেট করা নেই।", "fa-shield-halved");
+                        return;
+                    }
+                    window.selectedSupportUser = { phone, ...userData };
+                    const qText = securityQuestions[userData.secQ] || "আপনার নিরাপত্তা প্রশ্ন";
+                    document.getElementById('support-question-text').innerText = qText;
+                    document.getElementById('support-step-1').style.display = "none";
+                    document.getElementById('support-step-2').style.display = "block";
+                }
+            }).catch(() => {
+                showNotification("সার্ভার ত্রুটি", "ডাটাবেজ কানেকশন সমস্যা।", "fa-wifi");
+            });
+        }
+
+        function verifySupportAnswer() {
+            const answer = document.getElementById('support-answer-input').value.trim();
+            if (!answer) {
+                triggerErrorShake('support-answer-input');
+                showNotification("ইনপুট দিন", "উত্তরটি সঠিকভাবে লিখুন।", "fa-circle-exclamation");
+                return;
+            }
+
+            if (!window.selectedSupportUser) return;
+
+            if (answer.toLowerCase() === window.selectedSupportUser.secA.toLowerCase()) {
+                const randomNewPin = suggestedNewPins[Math.floor(Math.random() * suggestedNewPins.length)];
+                document.getElementById('support-new-pin-input').value = randomNewPin;
+                document.getElementById('support-step-2').style.display = "none";
+                document.getElementById('support-step-3').style.display = "block";
+            } else {
+                triggerErrorShake('support-answer-input');
+                showNotification("ভুল উত্তর", "নিরাপত্তা প্রশ্নের উত্তর ভুল হয়েছে!", "fa-lock");
+            }
+        }
+
+        function confirmSupportPINUpdate() {
+            if (!window.selectedSupportUser) return;
+            const newPin = document.getElementById('support-new-pin-input').value;
+            const userRef = ref(db, 'users/' + window.selectedSupportUser.phone);
+
+            update(userRef, { pin: newPin }).then(() => {
+                showNotification("পিন আপডেট সফল", `নতুন পিন: ${newPin}। লগইন করতে এটি ব্যবহার করুন।`, "fa-circle-check");
+                closeSupportModal();
+            }).catch(() => {
+                showNotification("ত্রুটি", "পিন আপডেট করতে ব্যর্থ হয়েছে।", "fa-triangle-exclamation");
+            });
+        }
+
+        function copyWalletCode() {
+            const codeInput = document.getElementById('shareable-wallet-code');
+            navigator.clipboard.writeText(codeInput.value).then(() => {
+                showNotification("কপি হয়েছে", "ওয়ালেট কোড ক্লিপবোর্ডে কপি করা হয়েছে!", "fa-copy");
+            });
+        }
+
+        function logout() {
+            currentLoggedUser = null;
+            userRole = "user";
+            balanceRevealed = false;
+            cachedUserObj = null;
+
+            if (activeDatabaseListener) {
+                activeDatabaseListener();
+                activeDatabaseListener = null;
+            }
+
+            document.getElementById('screen-dashboard').classList.remove('active');
+            document.getElementById('screen-transfer').classList.remove('active');
+            document.getElementById('screen-receive').classList.remove('active');
+            document.getElementById('screen-admin').classList.remove('active');
+            document.getElementById('screen-agent-panel').classList.remove('active');
+
+            document.getElementById('screen-auth').classList.add('active');
+            document.getElementById('header-phone').innerText = "GUEST";
+            document.getElementById('logout-icon').style.display = "none";
+            document.getElementById('main-app-container').className = "app-container";
+            document.getElementById('logo-text').innerText = "STB MOBILE";
+
+            document.getElementById('auth-phone').value = '';
+            document.getElementById('auth-pin').value = '';
+            checkAuthModeChange();
+            showNotification("লগআউট", "আপনি সফলভাবে লগআউট হয়েছেন।", "fa-arrow-right-from-bracket");
+        }
+
+        let toastTimeout;
+        function showNotification(title, body, iconClass = "fa-circle-check") {
+            const toast = document.getElementById('toast');
+            const toastTitle = document.getElementById('toast-title');
+            const toastBody = document.getElementById('toast-body');
+            const toastIcon = toast.querySelector('.toast-icon i');
+
+            toastTitle.innerText = title;
+            toastBody.innerText = body;
+            if (toastIcon) {
+                toastIcon.className = `fa-solid ${iconClass}`;
+            }
+
+            toast.classList.add('show');
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+        }
+
+        function triggerErrorShake(elementId) {
+            triggerHaptic([50, 50, 50]);
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            el.classList.add('shake-error');
+            setTimeout(() => {
+                el.classList.remove('shake-error');
+            }, 400);
+        }
+
+        function triggerSuccessFeedback(elementId) {
+            triggerHaptic(100);
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            el.classList.add('success-animate');
+            setTimeout(() => {
+                el.classList.remove('success-animate');
+            }, 400);
+        }
+    </script>
+</body>
+</html>
